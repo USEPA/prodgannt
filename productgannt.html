@@ -42,8 +42,12 @@
       rowsStrings.pop(); // remove the last row as its just an empty string
       rowsStrings.forEach((rowString) => {
         const rowData = {};
-        const rowCells = rowString.split(',').map((str) => str.trim());
-        rowCells.forEach((cell, index) => rowData[columnNames[index]] = cell);
+        // split rowString at commas, but ignore commas within double-quotes
+        const rowCells = rowString.split(/(?!\B"[^"]*),(?![^"]*"\B)/g);
+        rowCells.forEach((cell, index) => {
+          // remove escaped double-quote strings
+          rowData[columnNames[index]] = cell.replace(/\"/g, '');
+        });
         result.push(rowData);
       });
       return result;
